@@ -1,8 +1,27 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900">
+                    👋 勤怠ダッシュボード
+                </h2>
+
+                <p class="mt-1 text-sm text-gray-500">
+                    おはようございます、{{ Auth::user()->name }} さん！
+                </p>
+            </div>
+
+            <div class="text-left sm:text-right">
+                <p class="text-sm text-gray-500">
+                    {{ now()->isoFormat('YYYY年M月D日 (ddd)') }}
+                </p>
+
+                <p id="current-time"
+                    class="text-3xl font-bold text-blue-600">
+                    {{ now()->format('H:i:s') }}
+                </p>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -24,63 +43,78 @@
                     @php
                     $breaks = $todayAttendance?->breaks ?? collect();
 
-                    $activeBreak = $breaks
-                    ->first(fn ($break) => $break->break_end === null);
-
-                    $totalBreakMinutes = $breaks->sum('break_minutes');
-
-                    $workedMinutes = 0;
-
-                    if ($todayAttendance?->clock_in) {
-                    $workEnd = $todayAttendance->clock_out ?? now();
-
-                    $workedMinutes = max(
-                    0,
-                    $todayAttendance->clock_in->diffInMinutes($workEnd)
-                    - $totalBreakMinutes
+                    $activeBreak = $breaks->first(
+                    fn ($break) => $break->break_end === null
                     );
-                    }
-
-                    $workedHours = intdiv($workedMinutes, 60);
-                    $remainingWorkedMinutes = $workedMinutes % 60;
                     @endphp
 
-                    <h3 class="mb-4 text-xl font-bold">本日の勤怠</h3>
+                    <h3 class="mb-6 text-2xl font-bold text-gray-800">
+                        📊 本日の勤怠
+                    </h3>
 
-                    <div class="mb-6 rounded-lg bg-gray-50 p-4">
-                        <dl class="space-y-2">
-                            <div class="flex justify-between border-b border-gray-200 pb-2">
-                                <dt class="font-semibold">勤務日</dt>
-                                <dd>{{ now()->format('Y/m/d') }}</dd>
-                            </div>
-                            <div class="flex justify-between border-b border-gray-200 pb-2">
-                                <dt class="font-semibold">出勤</dt>
-                                <dd>{{ $todayAttendance?->clock_in?->format('H:i') ?? '未打刻' }}</dd>
-                            </div>
-                            <div class="flex justify-between border-b border-gray-200 pb-2">
-                                <dt class="font-semibold">退勤</dt>
-                                <dd>{{ $todayAttendance?->clock_out?->format('H:i') ?? '未打刻' }}</dd>
-                            </div>
-                            <div class="flex justify-between border-b border-gray-200 pb-2">
-                                <dt class="font-semibold">休憩状態</dt>
-                                <dd>{{ $activeBreak ? '休憩中' : '勤務中' }}</dd>
-                            </div>
-                            <div class="flex justify-between border-b border-gray-200 pb-2">
-                                <dt class="font-semibold">休憩時間</dt>
-                                <dd>{{ $totalBreakMinutes }}分</dd>
-                            </div>
+                    <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
-                            <div class="flex justify-between">
-                                <dt class="font-semibold">勤務時間</dt>
-                                <dd>
-                                    @if ($todayAttendance?->clock_in)
-                                    {{ $workedHours }}時間{{ $remainingWorkedMinutes }}分
-                                    @else
-                                    未計算
-                                    @endif
-                                </dd>
-                            </div>
-                        </dl>
+                        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+                            <dt class="text-sm font-semibold text-gray-500">
+                                📅 勤務日
+                            </dt>
+
+                            <dd class="mt-2 text-2xl font-bold text-gray-800">
+                                {{ now()->format('Y/m/d') }}
+                            </dd>
+                        </div>
+
+                        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+                            <dt class="text-sm font-semibold text-gray-500">
+                                ⏰ 出勤
+                            </dt>
+
+                            <dd class="mt-2 text-2xl font-bold text-green-600">
+                                {{ $todayAttendance?->clock_in?->format('H:i') ?? '未打刻' }}
+                            </dd>
+                        </div>
+
+                        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+                            <dt class="text-sm font-semibold text-gray-500">
+                                🏁 退勤
+                            </dt>
+
+                            <dd class="mt-2 text-2xl font-bold text-red-600">
+                                {{ $todayAttendance?->clock_out?->format('H:i') ?? '未打刻' }}
+                            </dd>
+                        </div>
+
+                        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+                            <dt class="text-sm font-semibold text-gray-500">
+                                ☕ 休憩状態
+                            </dt>
+
+                            <dd class="mt-2 text-2xl font-bold {{ $todayAttendance?->statusColor() ?? 'text-gray-500' }}">
+                                {{ $todayAttendance?->status() ?? '未出勤' }}
+                            </dd>
+
+                        </div>
+
+                        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+                            <dt class="text-sm font-semibold text-gray-500">
+                                ☕ 休憩時間
+                            </dt>
+
+                            <dd class="mt-2 text-2xl font-bold text-blue-600">
+                                {{ $todayAttendance?->breakTime() ?? '0時間0分' }}
+                            </dd>
+                        </div>
+
+                        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+                            <dt class="text-sm font-semibold text-gray-500">
+                                💼 勤務時間
+                            </dt>
+
+                            <dd class="mt-2 text-2xl font-bold text-indigo-600">
+                                {{ $todayAttendance?->workedTime() ?? '未計算' }}
+                            </dd>
+                        </div>
+
                     </div>
 
                     @if (! $todayAttendance || ! $todayAttendance->clock_in)
@@ -88,8 +122,8 @@
                         @csrf
                         <button
                             type="submit"
-                            class="rounded bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
-                            出勤する
+                            class="w-full rounded-xl bg-blue-600 px-6 py-4 text-lg font-bold text-white shadow-md transition hover:bg-blue-700 hover:shadow-lg">
+                            🟢 出勤する
                         </button>
                     </form>
                     @elseif ($todayAttendance->clock_out)
@@ -101,7 +135,7 @@
                         @csrf
                         <button
                             type="submit"
-                            class="rounded bg-yellow-600 px-6 py-3 font-semibold text-white hover:bg-yellow-700">
+                            class="w-full rounded-xl bg-yellow-500 px-6 py-4 text-lg font-bold text-white shadow-md transition hover:bg-yellow-600 hover:shadow-lg">
                             休憩を終了する
                         </button>
                     </form>
@@ -111,7 +145,7 @@
                             @csrf
                             <button
                                 type="submit"
-                                class="rounded bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700">
+                                class="w-full rounded-xl bg-green-600 px-6 py-4 text-lg font-bold text-white shadow-md transition hover:bg-green-700 hover:shadow-lg">
                                 休憩を開始する
                             </button>
                         </form>
@@ -120,7 +154,7 @@
                             @csrf
                             <button
                                 type="submit"
-                                class="rounded bg-red-600 px-6 py-3 font-semibold text-white hover:bg-red-700">
+                                class="w-full rounded-xl bg-red-600 px-6 py-4 text-lg font-bold text-white shadow-md transition hover:bg-red-700 hover:shadow-lg">
                                 退勤する
                             </button>
                         </form>
@@ -173,4 +207,19 @@
             </div>
         </div>
     </div>
+    <script>
+        function updateClock() {
+            const now = new Date();
+
+            const time =
+                now.getHours().toString().padStart(2, '0') + ':' +
+                now.getMinutes().toString().padStart(2, '0') + ':' +
+                now.getSeconds().toString().padStart(2, '0');
+
+            document.getElementById('current-time').textContent = time;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
 </x-app-layout>
