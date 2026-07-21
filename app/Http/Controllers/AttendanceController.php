@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SubmitAttendanceCorrection;
+use App\Http\Requests\AttendanceCorrectionStoreRequest;
 use App\Models\Attendance;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
@@ -26,14 +27,14 @@ class AttendanceController extends Controller
         $nextMonth = $targetMonth->copy()->addMonth()->format('Y-m');
 
         $workingDays = $attendances
-            ->filter(fn(Attendance $attendance) => $attendance->clock_in !== null)
+            ->filter(fn (Attendance $attendance) => $attendance->clock_in !== null)
             ->count();
 
         $totalWorkedMinutes = $attendances
-            ->sum(fn(Attendance $attendance) => $attendance->workedMinutes());
+            ->sum(fn (Attendance $attendance) => $attendance->workedMinutes());
 
         $totalBreakMinutes = $attendances
-            ->sum(fn(Attendance $attendance) => $attendance->totalBreakMinutes());
+            ->sum(fn (Attendance $attendance) => $attendance->totalBreakMinutes());
 
         return view('attendances.index', compact(
             'attendances',
@@ -50,9 +51,18 @@ class AttendanceController extends Controller
     {
         abort_if($attendance->user_id !== Auth::id(), 403);
 
-        $attendance->load('breaks');
+        $attendance->load(['breaks', 'correctionRequests' => fn ($query) => $query->latest()]);
+        $latestCorrectionRequest = $attendance->correctionRequests->first();
+        $breakRows = old('breaks', $attendance->breaks->map(fn ($break): array => [
+            'break_start' => $break->break_start->format('H:i'),
+            'break_end' => $break->break_end?->format('H:i'),
+        ])->all());
 
-        return view('attendances.show', compact('attendance'));
+        return view('attendances.show', compact(
+            'attendance',
+            'latestCorrectionRequest',
+            'breakRows',
+        ));
     }
 
     public function clockIn()
@@ -160,31 +170,20 @@ class AttendanceController extends Controller
 
         return back()->with('success', '休憩を終了しました。');
     }
-    public function update(Request $request, Attendance $attendance)
-    {
-        abort_if($attendance->user_id !== Auth::id(), 403);
 
-        $validated = $request->validate([
-            'clock_in' => ['nullable', 'date_format:H:i'],
-            'clock_out' => ['nullable', 'date_format:H:i'],
-        ]);
-
-        if (!empty($validated['clock_in'])) {
-            $attendance->clock_in = Carbon::parse(
-                $attendance->work_date->format('Y-m-d') . ' ' . $validated['clock_in']
-            );
-        }
-
-        if (!empty($validated['clock_out'])) {
-            $attendance->clock_out = Carbon::parse(
-                $attendance->work_date->format('Y-m-d') . ' ' . $validated['clock_out']
-            );
-        }
-
-        $attendance->save();
+    public function update(
+        AttendanceCorrectionStoreRequest $request,
+        Attendance $attendance,
+        SubmitAttendanceCorrection $submitAttendanceCorrection,
+    ) {
+        $correctionRequest = $submitAttendanceCorrection->execute(
+            $attendance,
+            $request->user(),
+            $request->validated(),
+        );
 
         return redirect()
-            ->route('attendances.show', $attendance)
-            ->with('success', '勤怠を更新しました。');
+            ->route('correction-requests.show', $correctionRequest)
+            ->with('success', '修正申請を送信しました');
     }
 }

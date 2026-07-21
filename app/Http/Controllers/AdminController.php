@@ -6,11 +6,13 @@ use App\Actions\Admin\UpdateAttendance;
 use App\Http\Requests\AdminAttendanceUpdateRequest;
 use App\Models\Attendance;
 use App\Models\User;
+use App\Services\Admin\MonthlyAttendanceCsvExporter;
 use App\ViewModels\MonthlyAttendanceSummary;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
 {
@@ -62,13 +64,7 @@ class AdminController extends Controller
     {
         abort_unless($user->isEmployee(), 404);
 
-        $validated = $request->validate([
-            'month' => ['nullable', 'date_format:Y-m'],
-        ]);
-
-        $targetMonth = isset($validated['month'])
-            ? Carbon::createFromFormat('Y-m', $validated['month'])->startOfMonth()
-            : now()->startOfMonth();
+        $targetMonth = $this->targetMonth($request);
 
         $attendances = $user->attendances()
             ->with('breaks')
@@ -89,6 +85,16 @@ class AdminController extends Controller
             'nextMonth',
             'monthlySummary',
         ));
+    }
+
+    public function attendanceExport(
+        Request $request,
+        User $user,
+        MonthlyAttendanceCsvExporter $exporter,
+    ): StreamedResponse {
+        abort_unless($user->isEmployee(), 404);
+
+        return $exporter->download($user, $this->targetMonth($request));
     }
 
     public function attendanceShow(User $user, Attendance $attendance): View
@@ -131,5 +137,16 @@ class AdminController extends Controller
         return redirect()
             ->route('admin.employees.attendances.show', [$user, $attendance])
             ->with('success', '勤怠を更新しました。');
+    }
+
+    private function targetMonth(Request $request): Carbon
+    {
+        $validated = $request->validate([
+            'month' => ['nullable', 'date_format:Y-m'],
+        ]);
+
+        return isset($validated['month'])
+            ? Carbon::createFromFormat('Y-m', $validated['month'])->startOfMonth()
+            : now()->startOfMonth();
     }
 }

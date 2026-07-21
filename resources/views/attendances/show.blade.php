@@ -15,9 +15,21 @@
                     </div>
                 @endif
 
-                <form action="{{ route('attendances.update', $attendance) }}" method="POST">
+                @if ($latestCorrectionRequest)
+                    <div class="mb-6 rounded-lg border px-4 py-3 font-semibold {{ $latestCorrectionRequest->isPending() ? 'border-yellow-200 bg-yellow-50 text-yellow-700' : 'border-green-200 bg-green-50 text-green-700' }}">
+                        最新の修正申請：{{ $latestCorrectionRequest->statusLabel() }}
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                        入力内容を確認してください。
+                        <x-input-error :messages="$errors->get('attendance')" class="mt-2" />
+                    </div>
+                @endif
+
+                <form action="{{ route('attendance-correction-requests.store', $attendance) }}" method="POST">
                     @csrf
-                    @method('PUT')
 
                     <div class="mb-5">
                         <label class="block font-semibold mb-2">
@@ -57,27 +69,42 @@
 
                     <hr class="my-6">
 
-                    <h3 class="text-lg font-bold mb-4">
-                        休憩一覧
-                    </h3>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold">休憩</h3>
+                        <button id="add-break" type="button" class="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">休憩を追加</button>
+                    </div>
 
-                    @forelse ($attendance->breaks as $break)
-                        <div class="mb-3 rounded-lg bg-gray-100 p-4">
-                            {{ $break->break_start?->format('H:i') ?? '-' }}
-                            ～
-                            {{ $break->break_end?->format('H:i') ?? '休憩中' }}
-                        </div>
-                    @empty
-                        <p class="text-gray-500">
-                            休憩記録はありません。
-                        </p>
-                    @endforelse
+                    <div id="break-rows" class="mt-4 space-y-4">
+                        @foreach ($breakRows as $index => $break)
+                            <div class="break-row rounded-lg bg-gray-100 p-4">
+                                <div class="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
+                                    <div>
+                                        <label class="mb-2 block font-semibold">休憩開始</label>
+                                        <input type="time" name="breaks[{{ $index }}][break_start]" value="{{ $break['break_start'] ?? '' }}" class="w-full rounded-md border-gray-300">
+                                        <x-input-error :messages="$errors->get('breaks.'.$index.'.break_start')" class="mt-2" />
+                                    </div>
+                                    <div>
+                                        <label class="mb-2 block font-semibold">休憩終了</label>
+                                        <input type="time" name="breaks[{{ $index }}][break_end]" value="{{ $break['break_end'] ?? '' }}" class="w-full rounded-md border-gray-300">
+                                        <x-input-error :messages="$errors->get('breaks.'.$index.'.break_end')" class="mt-2" />
+                                    </div>
+                                    <button type="button" class="remove-break rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-100 sm:mt-8">削除</button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-6">
+                        <label for="reason" class="mb-2 block font-semibold">申請理由</label>
+                        <textarea id="reason" name="reason" rows="4" class="w-full rounded-md border-gray-300">{{ old('reason') }}</textarea>
+                        <x-input-error :messages="$errors->get('reason')" class="mt-2" />
+                    </div>
 
                     <div class="mt-8 flex gap-3">
                         <button
                             type="submit"
                             class="rounded-md bg-blue-600 px-5 py-2 text-white hover:bg-blue-700">
-                            保存
+                            修正申請を送信
                         </button>
 
                         <a
@@ -92,4 +119,34 @@
             </div>
         </div>
     </div>
+
+    <template id="break-row-template">
+        <div class="break-row rounded-lg bg-gray-100 p-4">
+            <div class="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
+                <div><label class="mb-2 block font-semibold">休憩開始</label><input type="time" name="breaks[__INDEX__][break_start]" class="w-full rounded-md border-gray-300"></div>
+                <div><label class="mb-2 block font-semibold">休憩終了</label><input type="time" name="breaks[__INDEX__][break_end]" class="w-full rounded-md border-gray-300"></div>
+                <button type="button" class="remove-break rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-100 sm:mt-8">削除</button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        (() => {
+            const rows = document.getElementById('break-rows');
+            const template = document.getElementById('break-row-template');
+            let nextIndex = {{ count($breakRows) }};
+
+            document.getElementById('add-break').addEventListener('click', () => {
+                rows.insertAdjacentHTML('beforeend', template.innerHTML.replaceAll('__INDEX__', nextIndex++));
+            });
+
+            rows.addEventListener('click', (event) => {
+                const button = event.target.closest('.remove-break');
+
+                if (button) {
+                    button.closest('.break-row').remove();
+                }
+            });
+        })();
+    </script>
 </x-app-layout>

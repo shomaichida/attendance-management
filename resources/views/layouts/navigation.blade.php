@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
                         勤怠一覧
                     </x-nav-link>
+                    <x-nav-link :href="route('correction-requests.index')" :active="request()->routeIs('correction-requests.*')">
+                        申請履歴
+                    </x-nav-link>
                     @if (Auth::user()->isAdmin())
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
                             管理画面
@@ -80,6 +83,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
                 勤怠一覧
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('correction-requests.index')" :active="request()->routeIs('correction-requests.*')">
+                申請履歴
             </x-responsive-nav-link>
             @if (Auth::user()->isAdmin())
                 <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">

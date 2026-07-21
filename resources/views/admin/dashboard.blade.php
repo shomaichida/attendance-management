@@ -65,7 +65,7 @@
           管理メニュー
         </h3>
 
-        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <a
             href="{{ route('admin.employees.index') }}"
             class="rounded-lg bg-blue-600 px-6 py-4 text-center font-semibold text-white transition hover:bg-blue-700">
@@ -73,9 +73,15 @@
           </a>
 
           <a
-            href="#"
+            href="{{ route('admin.employees.index') }}"
             class="rounded-lg bg-green-600 px-6 py-4 text-center font-semibold text-white transition hover:bg-green-700">
-            📅 勤怠一覧
+            📅 社員別勤怠一覧
+          </a>
+
+          <a
+            href="{{ route('admin.correction-requests.index') }}"
+            class="rounded-lg bg-yellow-500 px-6 py-4 text-center font-semibold text-white transition hover:bg-yellow-600">
+            📝 修正申請一覧
           </a>
         </div>
       </div>

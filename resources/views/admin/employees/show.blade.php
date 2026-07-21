@@ -61,7 +61,17 @@
       </section>
 
       <section class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-        <div class="flex flex-col gap-4 border-b border-gray-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-4 border-b border-gray-100 px-6 py-5">
+          <div class="flex justify-end">
+            <a
+              href="{{ route('admin.employees.attendances.export', ['user' => $user, 'month' => $targetMonth->format('Y-m')]) }}"
+              class="rounded-lg bg-green-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-green-700"
+            >
+              CSV出力
+            </a>
+          </div>
+
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <a
             href="{{ route('admin.employees.show', ['user' => $user, 'month' => $previousMonth]) }}"
             class="rounded-lg border border-gray-300 px-4 py-2 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
@@ -79,6 +89,7 @@
           >
             翌月 →
           </a>
+          </div>
         </div>
 
         <div class="overflow-x-auto">

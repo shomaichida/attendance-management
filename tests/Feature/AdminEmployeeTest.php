@@ -165,6 +165,96 @@ class AdminEmployeeTest extends TestCase
             ->assertDontSee('10時間0分');
     }
 
+    public function test_admin_can_export_target_month_attendances_as_csv(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $employee = User::factory()->create(['name' => 'CSV対象社員']);
+        $attendance = $this->createAttendance($employee, '2026-07-10');
+        $this->createAttendance($employee, '2026-06-10');
+        $otherEmployee = User::factory()->create(['name' => 'CSV対象外社員']);
+        $this->createAttendance($otherEmployee, '2026-07-11');
+
+        $attendance->breaks()->create([
+            'break_start' => '2026-07-10 12:00:00',
+            'break_end' => '2026-07-10 12:30:00',
+            'break_minutes' => 30,
+        ]);
+        $attendance->breaks()->create([
+            'break_start' => '2026-07-10 15:00:00',
+            'break_end' => '2026-07-10 15:15:00',
+            'break_minutes' => 15,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get(route('admin.employees.attendances.export', [
+                'user' => $employee,
+                'month' => '2026-07',
+            ]));
+
+        $response->assertOk()
+            ->assertDownload('attendance-2026-07.csv');
+
+        $csv = $response->streamedContent();
+
+        $this->assertStringStartsWith("\xEF\xBB\xBF", $csv);
+        $this->assertStringContainsString('日付,氏名,出勤時刻,退勤時刻,休憩時間,合計勤務時間', $csv);
+        $this->assertStringContainsString('2026/07/10,CSV対象社員,09:00,18:00,0時間45分,8時間15分', $csv);
+        $this->assertStringNotContainsString('2026/06/10', $csv);
+        $this->assertStringNotContainsString('CSV対象外社員', $csv);
+    }
+
+    public function test_csv_export_handles_missing_time_and_break_data(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $employee = User::factory()->create(['name' => '未打刻社員']);
+        Attendance::query()->create([
+            'user_id' => $employee->id,
+            'work_date' => '2026-07-12',
+            'clock_in' => null,
+            'clock_out' => null,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get(route('admin.employees.attendances.export', [
+                'user' => $employee,
+                'month' => '2026-07',
+            ]));
+
+        $response->assertOk();
+        $this->assertStringContainsString('2026/07/12,未打刻社員,,,0時間0分,0時間0分', $response->streamedContent());
+    }
+
+    public function test_employee_cannot_export_admin_attendance_csv(): void
+    {
+        $employee = User::factory()->create();
+
+        $this->actingAs($employee)
+            ->get(route('admin.employees.attendances.export', [
+                'user' => $employee,
+                'month' => '2026-07',
+            ]))
+            ->assertForbidden();
+    }
+
+    public function test_employee_details_has_csv_link_for_displayed_month(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $employee = User::factory()->create();
+        $exportUrl = route('admin.employees.attendances.export', [
+            'user' => $employee,
+            'month' => '2026-05',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.employees.show', [
+                'user' => $employee,
+                'month' => '2026-05',
+            ]))
+            ->assertOk()
+            ->assertSee('CSV出力')
+            ->assertSee($exportUrl, false);
+    }
+
     private function createAttendance(
         User $employee,
         string $workDate,

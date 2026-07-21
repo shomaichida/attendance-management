@@ -38,6 +38,11 @@ class Attendance extends Model
         return $this->hasMany(AttendanceBreak::class);
     }
 
+    public function correctionRequests(): HasMany
+    {
+        return $this->hasMany(AttendanceCorrectionRequest::class);
+    }
+
     public function totalBreakMinutes(): int
     {
         return $this->breaks->sum('break_minutes');
