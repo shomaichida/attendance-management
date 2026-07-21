@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * ユーザーの日ごとの出退勤と勤務情報を表すModel。
+ */
 class Attendance extends Model
 {
     use HasFactory;
@@ -19,6 +22,11 @@ class Attendance extends Model
         'memo',
     ];
 
+    /**
+     * 勤怠属性のキャスト定義を返す。
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -28,26 +36,47 @@ class Attendance extends Model
         ];
     }
 
+    /**
+     * この勤怠を所有するユーザーを取得する。
+     *
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * この勤怠に紐づく複数の休憩を取得する。
+     *
+     * @return HasMany<AttendanceBreak, $this>
+     */
     public function breaks(): HasMany
     {
         return $this->hasMany(AttendanceBreak::class);
     }
 
+    /**
+     * この勤怠に対して提出された修正申請を取得する。
+     *
+     * @return HasMany<AttendanceCorrectionRequest, $this>
+     */
     public function correctionRequests(): HasMany
     {
         return $this->hasMany(AttendanceCorrectionRequest::class);
     }
 
+    /**
+     * 紐づくすべての休憩時間を分単位で合計する。
+     */
     public function totalBreakMinutes(): int
     {
         return $this->breaks->sum('break_minutes');
     }
 
+    /**
+     * 出退勤の差から休憩時間を除いた勤務時間を分単位で返す。
+     */
     public function workedMinutes(): int
     {
         if (! $this->clock_in) {
@@ -62,6 +91,9 @@ class Attendance extends Model
         );
     }
 
+    /**
+     * 合計休憩時間を「○時間○分」形式で返す。
+     */
     public function breakTime(): string
     {
         $minutes = $this->totalBreakMinutes();
@@ -71,6 +103,9 @@ class Attendance extends Model
         return "{$hours}時間{$remainingMinutes}分";
     }
 
+    /**
+     * 合計勤務時間を「○時間○分」形式で返す。
+     */
     public function workedTime(): string
     {
         $minutes = $this->workedMinutes();
@@ -80,6 +115,9 @@ class Attendance extends Model
         return "{$hours}時間{$remainingMinutes}分";
     }
 
+    /**
+     * 出退勤と進行中休憩から現在の勤務状態を返す。
+     */
     public function status(): string
     {
         if (! $this->clock_in) {
@@ -101,21 +139,33 @@ class Attendance extends Model
         return '勤務中';
     }
 
+    /**
+     * 現在の勤務状態が勤務中か判定する。
+     */
     public function isWorking(): bool
     {
         return $this->status() === '勤務中';
     }
 
+    /**
+     * 現在の勤務状態が休憩中か判定する。
+     */
     public function isOnBreak(): bool
     {
         return $this->status() === '休憩中';
     }
 
+    /**
+     * 当日の勤務が終了しているか判定する。
+     */
     public function isFinished(): bool
     {
         return $this->status() === '退勤済';
     }
 
+    /**
+     * 現在の勤務状態に対応する表示色のTailwind CSSクラスを返す。
+     */
     public function statusColor(): string
     {
         return match ($this->status()) {

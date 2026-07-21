@@ -13,21 +13,22 @@
       <div class="flex rounded-xl border border-gray-100 bg-white p-2 shadow-sm">
         <a
           href="{{ route('admin.correction-requests.index', ['status' => 'pending']) }}"
-          class="flex-1 rounded-lg px-4 py-2 text-center text-sm font-semibold {{ $status === 'pending' ? 'bg-yellow-500 text-white' : 'text-gray-600 hover:bg-gray-50' }}"
+          class="touch-target flex-1 rounded-lg px-3 py-2 text-center text-sm font-semibold {{ $status === 'pending' ? 'bg-yellow-500 text-white' : 'text-gray-600 hover:bg-gray-50' }}"
         >
           承認待ち
         </a>
         <a
           href="{{ route('admin.correction-requests.index', ['status' => 'approved']) }}"
-          class="flex-1 rounded-lg px-4 py-2 text-center text-sm font-semibold {{ $status === 'approved' ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}"
+          class="touch-target flex-1 rounded-lg px-3 py-2 text-center text-sm font-semibold {{ $status === 'approved' ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}"
         >
           承認済み
         </a>
       </div>
 
       <section class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
+        <p class="mobile-scroll-hint px-4 pt-4">横にスクロールして申請を確認できます →</p>
+        <div class="table-scroll">
+          <table class="min-w-[900px] divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
                 <th class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold text-gray-500">状態</th>
@@ -47,7 +48,7 @@
                   <td class="max-w-sm truncate px-6 py-4 text-sm text-gray-600">{{ $correctionRequest->reason }}</td>
                   <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">{{ $correctionRequest->created_at->format('Y/m/d H:i') }}</td>
                   <td class="whitespace-nowrap px-6 py-4 text-right">
-                    <a href="{{ route('admin.correction-requests.show', $correctionRequest) }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">詳細</a>
+                    <a href="{{ route('admin.correction-requests.show', $correctionRequest) }}" class="touch-target rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">詳細</a>
                   </td>
                 </tr>
               @empty

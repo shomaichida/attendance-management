@@ -6,14 +6,27 @@ use App\Actions\SubmitAttendanceCorrection;
 use App\Http\Requests\AttendanceCorrectionStoreRequest;
 use App\Models\Attendance;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
+/**
+ * 一般ユーザーの勤怠打刻・勤怠表示・修正申請を管理するController。
+ */
 class AttendanceController extends Controller
 {
-    public function index()
+    /**
+     * 指定月のログインユーザーの勤怠一覧と月次集計を表示する。
+     */
+    public function index(Request $request): View
     {
-        $targetMonth = request('month')
-            ? Carbon::createFromFormat('Y-m', request('month'))->startOfMonth()
+        $validated = $request->validate([
+            'month' => ['nullable', 'date_format:Y-m'],
+        ]);
+
+        $targetMonth = isset($validated['month'])
+            ? Carbon::createFromFormat('Y-m', $validated['month'])->startOfMonth()
             : now()->startOfMonth();
 
         $attendances = Attendance::with('breaks')
@@ -47,7 +60,10 @@ class AttendanceController extends Controller
         ));
     }
 
-    public function show(Attendance $attendance)
+    /**
+     * ログインユーザーが所有する勤怠の詳細と最新の修正申請を表示する。
+     */
+    public function show(Attendance $attendance): View
     {
         abort_if($attendance->user_id !== Auth::id(), 403);
 
@@ -65,7 +81,10 @@ class AttendanceController extends Controller
         ));
     }
 
-    public function clockIn()
+    /**
+     * ログインユーザーの当日の出勤時刻を記録する。
+     */
+    public function clockIn(): RedirectResponse
     {
         $today = now()->toDateString();
 
@@ -92,7 +111,10 @@ class AttendanceController extends Controller
         return back()->with('success', '出勤を記録しました。');
     }
 
-    public function clockOut()
+    /**
+     * ログインユーザーの当日の退勤時刻を記録する。
+     */
+    public function clockOut(): RedirectResponse
     {
         $attendance = Attendance::where('user_id', Auth::id())
             ->whereDate('work_date', today())
@@ -117,7 +139,10 @@ class AttendanceController extends Controller
         return back()->with('success', '退勤を記録しました。');
     }
 
-    public function breakStart()
+    /**
+     * ログインユーザーの当日の休憩を開始する。
+     */
+    public function breakStart(): RedirectResponse
     {
         $attendance = Attendance::where('user_id', Auth::id())
             ->whereDate('work_date', today())
@@ -142,7 +167,10 @@ class AttendanceController extends Controller
         return back()->with('success', '休憩を開始しました。');
     }
 
-    public function breakEnd()
+    /**
+     * 進行中の休憩を終了し、休憩時間を記録する。
+     */
+    public function breakEnd(): RedirectResponse
     {
         $attendance = Attendance::where('user_id', Auth::id())
             ->whereDate('work_date', today())
@@ -171,11 +199,14 @@ class AttendanceController extends Controller
         return back()->with('success', '休憩を終了しました。');
     }
 
+    /**
+     * 勤怠を直接更新せず、ログインユーザーの修正申請を登録する。
+     */
     public function update(
         AttendanceCorrectionStoreRequest $request,
         Attendance $attendance,
         SubmitAttendanceCorrection $submitAttendanceCorrection,
-    ) {
+    ): RedirectResponse {
         $correctionRequest = $submitAttendanceCorrection->execute(
             $attendance,
             $request->user(),

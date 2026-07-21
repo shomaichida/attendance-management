@@ -6,14 +6,22 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
+/**
+ * 管理者による勤怠・複数休憩の更新内容を検証するFormRequest。
+ */
 class AdminAttendanceUpdateRequest extends FormRequest
 {
+    /**
+     * ログインユーザーが管理者か確認する。
+     */
     public function authorize(): bool
     {
         return $this->user()?->isAdmin() === true;
     }
 
     /**
+     * 出退勤、複数休憩、コメントの検証ルールを返す。
+     *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
@@ -30,6 +38,8 @@ class AdminAttendanceUpdateRequest extends FormRequest
     }
 
     /**
+     * 管理者用勤怠編集で使用する日本語バリデーションメッセージを返す。
+     *
      * @return array<string, string>
      */
     public function messages(): array
@@ -50,6 +60,11 @@ class AdminAttendanceUpdateRequest extends FormRequest
         ];
     }
 
+    /**
+     * 休憩が勤務時間内に収まり、互いに重複しないことを検証する。
+     *
+     * @return array<int, callable(Validator): void>
+     */
     public function after(): array
     {
         return [

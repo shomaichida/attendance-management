@@ -5,7 +5,7 @@
 
   <div class="py-8">
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-      <form action="{{ route('admin.employees.attendances.update', [$user, $attendance]) }}" method="POST" class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+      <form action="{{ route('admin.employees.attendances.update', [$user, $attendance]) }}" method="POST" class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:p-6">
         @csrf
         @method('PUT')
 
@@ -34,9 +34,9 @@
         </div>
 
         <div class="mt-8 border-t border-gray-100 pt-6">
-          <div class="flex items-center justify-between gap-4">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h3 class="text-lg font-bold text-gray-900">休憩</h3>
-            <button id="add-break" type="button" class="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700">
+            <button id="add-break" type="button" class="touch-target w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700 sm:w-auto">
               休憩を追加
             </button>
           </div>
@@ -57,7 +57,7 @@
                     <x-input-error :messages="$errors->get('breaks.'.$index.'.break_end')" class="mt-2" />
                     <x-input-error :messages="$errors->get('breaks.'.$index.'.id')" class="mt-2" />
                   </div>
-                  <button type="button" class="remove-break rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 sm:mt-7">
+                  <button type="button" class="remove-break touch-target w-full rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 sm:mt-7 sm:w-auto">
                     削除
                   </button>
                 </div>
@@ -73,8 +73,8 @@
         </div>
 
         <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-          <button type="submit" class="rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-700">保存する</button>
-          <a href="{{ route('admin.employees.attendances.show', [$user, $attendance]) }}" class="rounded-lg bg-gray-100 px-5 py-2.5 text-center font-semibold text-gray-700 transition hover:bg-gray-200">キャンセル</a>
+          <button type="submit" class="touch-target w-full rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-700 sm:w-auto">保存する</button>
+          <a href="{{ route('admin.employees.attendances.show', [$user, $attendance]) }}" class="touch-target w-full rounded-lg bg-gray-100 px-5 py-2.5 text-center font-semibold text-gray-700 transition hover:bg-gray-200 sm:w-auto">キャンセル</a>
         </div>
       </form>
     </div>
@@ -92,7 +92,7 @@
           <label class="mb-2 block text-sm font-semibold text-gray-700">休憩終了</label>
           <input name="breaks[__INDEX__][break_end]" type="time" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500">
         </div>
-        <button type="button" class="remove-break rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 sm:mt-7">
+        <button type="button" class="remove-break touch-target w-full rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 sm:mt-7 sm:w-auto">
           削除
         </button>
       </div>

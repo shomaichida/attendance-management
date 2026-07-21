@@ -8,8 +8,17 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
+/**
+ * 管理者による勤怠修正申請の承認と勤怠への反映を担当するAction。
+ */
 class ApproveAttendanceCorrection
 {
+    /**
+     * 申請と勤怠を排他ロックし、出退勤・複数休憩・承認情報を更新する。
+     *
+     *
+     * @throws ConflictHttpException
+     */
     public function execute(AttendanceCorrectionRequest $correctionRequest, User $admin): void
     {
         DB::transaction(function () use ($correctionRequest, $admin): void {

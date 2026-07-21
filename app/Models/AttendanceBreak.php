@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * 勤怠に紐づく1回分の休憩情報を表すModel。
+ */
 class AttendanceBreak extends Model
 {
     use HasFactory;
@@ -17,6 +20,11 @@ class AttendanceBreak extends Model
         'break_minutes',
     ];
 
+    /**
+     * 休憩属性のキャスト定義を返す。
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -26,6 +34,11 @@ class AttendanceBreak extends Model
         ];
     }
 
+    /**
+     * この休憩が属する勤怠を取得する。
+     *
+     * @return BelongsTo<Attendance, $this>
+     */
     public function attendance(): BelongsTo
     {
         return $this->belongsTo(Attendance::class);

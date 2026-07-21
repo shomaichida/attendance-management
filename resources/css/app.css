@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html,
+    body {
+        @apply max-w-full overflow-x-hidden;
+    }
+
+    @media (max-width: 767px) {
+        input:not([type='checkbox']):not([type='radio']),
+        select,
+        textarea {
+            font-size: 16px;
+        }
+    }
+}
+
+@layer components {
+    .app-screen {
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding-bottom: max(2rem, calc(1rem + env(safe-area-inset-bottom)));
+    }
+
+    .table-scroll {
+        @apply max-w-full overflow-x-auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .mobile-scroll-hint {
+        @apply mb-2 text-xs font-medium text-gray-500 sm:hidden;
+    }
+
+    .touch-target {
+        @apply inline-flex min-h-11 items-center justify-center;
+    }
+}

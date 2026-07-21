@@ -62,10 +62,10 @@
 
       <section class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
         <div class="flex flex-col gap-4 border-b border-gray-100 px-6 py-5">
-          <div class="flex justify-end">
+          <div class="flex justify-stretch sm:justify-end">
             <a
               href="{{ route('admin.employees.attendances.export', ['user' => $user, 'month' => $targetMonth->format('Y-m')]) }}"
-              class="rounded-lg bg-green-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-green-700"
+              class="touch-target w-full rounded-lg bg-green-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-green-700 sm:w-auto"
             >
               CSV出力
             </a>
@@ -74,7 +74,7 @@
           <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <a
             href="{{ route('admin.employees.show', ['user' => $user, 'month' => $previousMonth]) }}"
-            class="rounded-lg border border-gray-300 px-4 py-2 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            class="touch-target w-full rounded-lg border border-gray-300 px-4 py-2 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:w-auto"
           >
             ← 前月
           </a>
@@ -85,15 +85,16 @@
 
           <a
             href="{{ route('admin.employees.show', ['user' => $user, 'month' => $nextMonth]) }}"
-            class="rounded-lg border border-gray-300 px-4 py-2 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            class="touch-target w-full rounded-lg border border-gray-300 px-4 py-2 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:w-auto"
           >
             翌月 →
           </a>
           </div>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
+        <p class="mobile-scroll-hint px-4 pt-4">横にスクロールして勤怠を確認できます →</p>
+        <div class="table-scroll">
+          <table class="min-w-[820px] divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
                 <th class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">日付</th>
@@ -117,7 +118,7 @@
                   <td class="whitespace-nowrap px-6 py-4 text-right">
                     <a
                       href="{{ route('admin.employees.attendances.show', [$user, $attendance]) }}"
-                      class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
+                      class="touch-target rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
                       詳細
                     </a>
                   </td>

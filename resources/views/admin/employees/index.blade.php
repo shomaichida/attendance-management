@@ -44,7 +44,7 @@
 
               <a
                 href="{{ route('admin.employees.show', $employee) }}"
-                class="mt-6 w-full rounded-lg bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-blue-700"
+                class="touch-target mt-6 w-full rounded-lg bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-blue-700"
               >
                 詳細
               </a>

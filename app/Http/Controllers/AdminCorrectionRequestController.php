@@ -10,8 +10,14 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
+/**
+ * 管理者向けの勤怠修正申請一覧・詳細・承認を管理するController。
+ */
 class AdminCorrectionRequestController extends Controller
 {
+    /**
+     * 全社員の修正申請を承認状態別に一覧表示する。
+     */
     public function index(Request $request): View
     {
         $validated = $request->validate([
@@ -31,6 +37,9 @@ class AdminCorrectionRequestController extends Controller
         return view('admin.correction-requests.index', compact('correctionRequests', 'status'));
     }
 
+    /**
+     * 修正前後の出退勤と複数休憩を比較して申請詳細を表示する。
+     */
     public function show(AttendanceCorrectionRequest $correctionRequest): View
     {
         $correctionRequest->load(['user', 'attendance', 'approver']);
@@ -44,6 +53,9 @@ class AdminCorrectionRequestController extends Controller
         ));
     }
 
+    /**
+     * 修正申請を承認し、申請内容を対象勤怠へ反映する。
+     */
     public function approve(
         AttendanceCorrectionRequest $correctionRequest,
         ApproveAttendanceCorrection $approveAttendanceCorrection,

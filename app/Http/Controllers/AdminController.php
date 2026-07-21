@@ -14,8 +14,14 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * 管理者向けの社員・勤怠表示、編集、CSV出力を管理するController。
+ */
 class AdminController extends Controller
 {
+    /**
+     * 当日の勤務状況を集計して管理者ダッシュボードを表示する。
+     */
     public function index(): View
     {
         $todayAttendances = Attendance::query()
@@ -48,6 +54,9 @@ class AdminController extends Controller
         ));
     }
 
+    /**
+     * 有効な一般社員と当日の勤怠状況を一覧表示する。
+     */
     public function employees(): View
     {
         $employees = User::query()
@@ -60,6 +69,9 @@ class AdminController extends Controller
         return view('admin.employees.index', compact('employees'));
     }
 
+    /**
+     * 指定社員の対象月の勤怠一覧と月次集計を表示する。
+     */
     public function employeeShow(Request $request, User $user): View
     {
         abort_unless($user->isEmployee(), 404);
@@ -87,6 +99,9 @@ class AdminController extends Controller
         ));
     }
 
+    /**
+     * 指定社員の対象月の勤怠をCSV形式で出力する。
+     */
     public function attendanceExport(
         Request $request,
         User $user,
@@ -97,6 +112,9 @@ class AdminController extends Controller
         return $exporter->download($user, $this->targetMonth($request));
     }
 
+    /**
+     * 指定社員が所有する勤怠の詳細を表示する。
+     */
     public function attendanceShow(User $user, Attendance $attendance): View
     {
         abort_unless($user->isEmployee(), 404);
@@ -106,6 +124,9 @@ class AdminController extends Controller
         return view('admin.employees.attendances.show', compact('user', 'attendance'));
     }
 
+    /**
+     * 指定社員が所有する勤怠の編集画面を表示する。
+     */
     public function attendanceEdit(User $user, Attendance $attendance): View
     {
         abort_unless($user->isEmployee(), 404);
@@ -124,6 +145,9 @@ class AdminController extends Controller
         ));
     }
 
+    /**
+     * 指定社員の勤怠本体と複数休憩を更新する。
+     */
     public function attendanceUpdate(
         AdminAttendanceUpdateRequest $request,
         User $user,

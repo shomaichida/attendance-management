@@ -6,8 +6,14 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
+/**
+ * 一般ユーザーの勤怠修正申請を検証するFormRequest。
+ */
 class AttendanceCorrectionStoreRequest extends FormRequest
 {
+    /**
+     * 対象勤怠がログインユーザー本人のものか確認する。
+     */
     public function authorize(): bool
     {
         return $this->user() !== null
@@ -15,6 +21,8 @@ class AttendanceCorrectionStoreRequest extends FormRequest
     }
 
     /**
+     * 修正後の出退勤・複数休憩・申請理由の検証ルールを返す。
+     *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
@@ -30,6 +38,8 @@ class AttendanceCorrectionStoreRequest extends FormRequest
     }
 
     /**
+     * 勤怠修正申請で使用する日本語バリデーションメッセージを返す。
+     *
      * @return array<string, string>
      */
     public function messages(): array
@@ -39,7 +49,10 @@ class AttendanceCorrectionStoreRequest extends FormRequest
             'clock_in.required_with' => '退勤を入力する場合は出勤も入力してください。',
             'clock_out.date_format' => '退勤は時刻形式で入力してください。',
             'clock_out.after_or_equal' => '退勤は出勤以降の時刻にしてください。',
+            'breaks.array' => '休憩情報の形式が正しくありません。',
+            'breaks.*.break_start.date_format' => '休憩開始は時刻形式で入力してください。',
             'breaks.*.break_start.required_with' => '休憩終了を入力する場合は休憩開始も入力してください。',
+            'breaks.*.break_end.date_format' => '休憩終了は時刻形式で入力してください。',
             'breaks.*.break_end.required_with' => '休憩開始を入力する場合は休憩終了も入力してください。',
             'breaks.*.break_end.after_or_equal' => '休憩終了は休憩開始以降の時刻にしてください。',
             'reason.required' => '申請理由を入力してください。',
@@ -47,6 +60,11 @@ class AttendanceCorrectionStoreRequest extends FormRequest
         ];
     }
 
+    /**
+     * 休憩が勤務時間内に収まり、互いに重複しないことを検証する。
+     *
+     * @return array<int, callable(Validator): void>
+     */
     public function after(): array
     {
         return [

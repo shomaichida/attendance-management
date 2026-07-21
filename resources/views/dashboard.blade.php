@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h2 class="text-3xl font-bold text-gray-900">
+                <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">
                     👋 勤怠ダッシュボード
                 </h2>
 
@@ -24,10 +24,10 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+    <div class="py-6 sm:py-12">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="overflow-hidden rounded-lg bg-white shadow-sm">
+                <div class="p-4 text-gray-900 sm:p-6">
                     @if (session('success'))
                     <div class="mb-4 rounded bg-green-100 p-3 text-green-700">
                         {{ session('success') }}
@@ -140,8 +140,8 @@
                         </button>
                     </form>
                     @else
-                    <div class="flex flex-wrap gap-4">
-                        <form method="POST" action="{{ route('attendance.break-start') }}">
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <form method="POST" action="{{ route('attendance.break-start') }}" class="w-full">
                             @csrf
                             <button
                                 type="submit"
@@ -150,7 +150,7 @@
                             </button>
                         </form>
 
-                        <form method="POST" action="{{ route('attendance.clock-out') }}">
+                        <form method="POST" action="{{ route('attendance.clock-out') }}" class="w-full">
                             @csrf
                             <button
                                 type="submit"
@@ -165,8 +165,9 @@
                     <div class="mt-6">
                         <h3 class="mb-3 text-xl font-bold">本日の休憩履歴</h3>
 
-                        <div class="overflow-hidden rounded-lg border border-gray-200">
-                            <table class="min-w-full divide-y divide-gray-200">
+                        <p class="mobile-scroll-hint">横にスクロールして休憩履歴を確認できます →</p>
+                        <div class="table-scroll rounded-lg border border-gray-200">
+                            <table class="min-w-[560px] divide-y divide-gray-200">
                                 <thead class="bg-gray-100">
                                     <tr>
                                         <th class="px-4 py-2 text-left">回数</th>

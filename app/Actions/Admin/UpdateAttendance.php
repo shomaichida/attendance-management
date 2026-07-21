@@ -9,10 +9,17 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * 管理者による勤怠本体と複数休憩の更新を担当するAction。
+ */
 class UpdateAttendance
 {
     /**
+     * 勤怠と送信された休憩行を同一トランザクション内で同期する。
+     *
      * @param  array<string, mixed>  $data
+     *
+     * @throws ValidationException
      */
     public function execute(Attendance $attendance, array $data): void
     {

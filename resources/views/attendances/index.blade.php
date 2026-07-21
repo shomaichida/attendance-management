@@ -5,13 +5,13 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+    <div class="py-6 sm:py-12">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="overflow-hidden rounded-lg bg-white p-4 shadow-sm sm:p-6">
                 <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <a
                         href="{{ route('attendances.index', ['month' => $previousMonth]) }}"
-                        class="rounded-md bg-gray-200 px-4 py-2 text-center font-semibold text-gray-700 hover:bg-gray-300">
+                        class="touch-target w-full rounded-md bg-gray-200 px-4 py-2 text-center font-semibold text-gray-700 hover:bg-gray-300 sm:w-auto">
                         &lt; 前月
                     </a>
 
@@ -21,13 +21,14 @@
 
                     <a
                         href="{{ route('attendances.index', ['month' => $nextMonth]) }}"
-                        class="rounded-md bg-gray-200 px-4 py-2 text-center font-semibold text-gray-700 hover:bg-gray-300">
+                        class="touch-target w-full rounded-md bg-gray-200 px-4 py-2 text-center font-semibold text-gray-700 hover:bg-gray-300 sm:w-auto">
                         翌月 &gt;
                     </a>
                 </div>
 
-                <div class="overflow-x-auto rounded-lg border border-gray-200">
-                    <table class="min-w-full whitespace-nowrap">
+                <p class="mobile-scroll-hint">横にスクロールして勤怠を確認できます →</p>
+                <div class="table-scroll rounded-lg border border-gray-200">
+                    <table class="min-w-[680px] whitespace-nowrap">
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="border-b px-4 py-3 text-left text-sm font-semibold text-gray-700">
@@ -87,7 +88,7 @@
                                 <td class="px-4 py-3 text-center">
                                     <a
                                         href="{{ route('attendances.show', ['attendance' => $attendance->id]) }}"
-                                        class="inline-block rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                        class="touch-target rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                         詳細
                                     </a>
                                 </td>
@@ -110,7 +111,7 @@
                 $remainingTotalBreakMinutes = $totalBreakMinutes % 60;
                 @endphp
 
-                <div class="mt-6 rounded-lg bg-gray-50 p-6">
+                <div class="mt-6 rounded-lg bg-gray-50 p-4 sm:p-6">
                     <h3 class="mb-4 text-xl font-bold text-gray-900">
                         今月の集計
                     </h3>

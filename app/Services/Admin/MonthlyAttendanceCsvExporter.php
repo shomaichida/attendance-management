@@ -7,8 +7,14 @@ use App\Models\User;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * 社員の月次勤怠CSVを生成するService。
+ */
 class MonthlyAttendanceCsvExporter
 {
+    /**
+     * 対象月の勤怠と複数休憩を取得し、UTF-8 BOM付きCSVとして返す。
+     */
     public function download(User $user, Carbon $targetMonth): StreamedResponse
     {
         $attendances = $user->attendances()

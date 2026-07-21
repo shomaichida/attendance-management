@@ -8,8 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
+/**
+ * 一般ユーザー自身の勤怠修正申請履歴を管理するController。
+ */
 class CorrectionRequestController extends Controller
 {
+    /**
+     * ログインユーザーの修正申請を承認状態別に一覧表示する。
+     */
     public function index(Request $request): View
     {
         $validated = $request->validate([
@@ -30,6 +36,9 @@ class CorrectionRequestController extends Controller
         return view('correction-requests.index', compact('correctionRequests', 'status'));
     }
 
+    /**
+     * ログインユーザーが所有する修正申請の詳細を表示する。
+     */
     public function show(Request $request, AttendanceCorrectionRequest $correctionRequest): View
     {
         abort_unless($correctionRequest->user_id === $request->user()->id, 403);

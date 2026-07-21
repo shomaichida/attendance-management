@@ -13,8 +13,8 @@
     </div>
   </x-slot>
 
-  <div class="py-8">
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+  <div class="py-6 sm:py-8">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -60,7 +60,7 @@
 
       </div>
 
-      <div class="mt-8 rounded-xl border border-gray-100 bg-white p-8 shadow-sm">
+      <div class="mt-8 rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:p-8">
         <h3 class="text-xl font-bold text-gray-900">
           管理メニュー
         </h3>
@@ -68,19 +68,19 @@
         <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <a
             href="{{ route('admin.employees.index') }}"
-            class="rounded-lg bg-blue-600 px-6 py-4 text-center font-semibold text-white transition hover:bg-blue-700">
+            class="touch-target rounded-lg bg-blue-600 px-6 py-4 text-center font-semibold text-white transition hover:bg-blue-700">
             👥 社員一覧
           </a>
 
           <a
             href="{{ route('admin.employees.index') }}"
-            class="rounded-lg bg-green-600 px-6 py-4 text-center font-semibold text-white transition hover:bg-green-700">
+            class="touch-target rounded-lg bg-green-600 px-6 py-4 text-center font-semibold text-white transition hover:bg-green-700">
             📅 社員別勤怠一覧
           </a>
 
           <a
             href="{{ route('admin.correction-requests.index') }}"
-            class="rounded-lg bg-yellow-500 px-6 py-4 text-center font-semibold text-white transition hover:bg-yellow-600">
+            class="touch-target rounded-lg bg-yellow-500 px-6 py-4 text-center font-semibold text-white transition hover:bg-yellow-600">
             📝 修正申請一覧
           </a>
         </div>

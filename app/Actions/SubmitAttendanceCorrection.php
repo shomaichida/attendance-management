@@ -9,10 +9,17 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * 一般ユーザーの勤怠修正申請を登録するAction。
+ */
 class SubmitAttendanceCorrection
 {
     /**
+     * 勤怠をロックし、重複する承認待ち申請を防いで修正前後の内容を保存する。
+     *
      * @param  array<string, mixed>  $data
+     *
+     * @throws ValidationException
      */
     public function execute(Attendance $attendance, User $user, array $data): AttendanceCorrectionRequest
     {

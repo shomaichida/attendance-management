@@ -14,7 +14,7 @@
         <div class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-700">{{ session('success') }}</div>
       @endif
 
-      <section class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+      <section class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:p-6">
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div><p class="text-sm text-gray-500">社員番号</p><p class="mt-1 font-semibold text-gray-900">{{ $user->employee_number }}</p></div>
           <div><p class="text-sm text-gray-500">氏名</p><p class="mt-1 font-semibold text-gray-900">{{ $user->name }}</p></div>
@@ -47,7 +47,7 @@
         </div>
 
         <div class="mt-8">
-          <a href="{{ route('admin.employees.attendances.edit', [$user, $attendance]) }}" class="inline-flex rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-700">
+          <a href="{{ route('admin.employees.attendances.edit', [$user, $attendance]) }}" class="touch-target w-full rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-700 sm:w-auto">
             編集する
           </a>
         </div>

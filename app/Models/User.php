@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * 一般社員と管理者のアカウント情報を表すModel。
+ */
 #[Fillable([
     'name',
     'email',
@@ -26,6 +27,11 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    /**
+     * ユーザー属性のキャスト定義を返す。
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -35,11 +41,21 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * このユーザーに紐づく勤怠を取得する。
+     *
+     * @return HasMany<Attendance, $this>
+     */
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
     }
 
+    /**
+     * このユーザーの当日勤怠を取得する。
+     *
+     * @return HasOne<Attendance, $this>
+     */
     public function todayAttendance(): HasOne
     {
         return $this->hasOne(Attendance::class)
@@ -47,16 +63,25 @@ class User extends Authenticatable
             ->withDefault();
     }
 
+    /**
+     * ユーザーが管理者権限を持つか判定する。
+     */
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
+    /**
+     * ユーザーが一般社員か判定する。
+     */
     public function isEmployee(): bool
     {
         return $this->role === 'employee';
     }
 
+    /**
+     * ユーザーのアカウントが有効か判定する。
+     */
     public function isActive(): bool
     {
         return $this->is_active;
