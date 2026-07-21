@@ -66,34 +66,32 @@ Welcome画面・ログイン画面・勤怠一覧・管理者画面など、
 
 ## Welcome画面
 
-![Welcome画面](docs/images/welcome.png)
+![Welcome](docs/images/welcome.png)
 
-勤怠管理アプリのトップページです。  
-ログイン・新規登録への導線とアプリ概要を表示しています。
-
----
-
-## ログイン画面
-
-![ログイン画面](docs/images/login.png)
-
-スマートフォンにも対応したログイン画面です。  
-ログイン・新規登録をタブ形式で切り替えられます。
+アプリのトップページです。  
+ログイン・新規登録への導線とアプリ概要を表示します。
 
 ---
 
-## 新規登録画面
+## ログイン画面（PC）
 
-![新規登録画面](docs/images/register.png)
+![Login PC](docs/images/login-pc.png)
 
-アカウント作成画面です。  
-スマートフォンでも入力しやすいレイアウトになっています。
+PC向けログイン画面です。
+
+---
+
+## ログイン画面（スマートフォン）
+
+![Login Mobile](docs/images/login-mobile.jpg)
+
+レスポンシブ対応したログイン画面です。
 
 ---
 
 ## 一般ユーザーダッシュボード
 
-![ダッシュボード](docs/images/dashboard.png)
+![User Dashboard](docs/images/dashboard-user.png)
 
 出勤・退勤・休憩開始・休憩終了を行う画面です。
 
@@ -101,57 +99,33 @@ Welcome画面・ログイン画面・勤怠一覧・管理者画面など、
 
 ## 勤怠一覧
 
-![勤怠一覧](docs/images/attendance-list.png)
+![Attendance List](docs/images/attendance-list.png)
 
-月別の勤怠一覧を表示します。
+月ごとの勤怠情報を一覧表示します。
 
 ---
 
 ## 勤怠詳細・修正申請
 
-![勤怠詳細](docs/images/attendance-detail.png)
+![Attendance Detail](docs/images/attendance-detail.png)
 
-勤務時間・休憩時間の確認と修正申請を行えます。
-
----
-
-## 修正申請一覧
-
-![修正申請一覧](docs/images/correction-list.png)
-
-申請した修正内容と承認状態を確認できます。
+勤務時間・休憩時間を確認し、修正申請を送信できます。
 
 ---
 
 ## 管理者ダッシュボード
 
-![管理者ダッシュボード](docs/images/admin-dashboard.png)
+![Admin Dashboard](docs/images/dashboard-admin.png)
 
-管理者向けメニューです。
-
----
-
-## スタッフ一覧
-
-![スタッフ一覧](docs/images/employees.png)
-
-全スタッフの勤怠情報へアクセスできます。
+管理者専用のメニュー画面です。
 
 ---
 
-## 修正申請承認
+## 修正申請承認画面
 
-![修正申請承認](docs/images/approval.png)
+![Approval](docs/images/approval.png)
 
 一般ユーザーから送信された修正申請を確認・承認できます。
-
----
-
-## CSV出力
-
-![CSV出力](docs/images/csv.png)
-
-対象月の勤怠情報をCSV形式でダウンロードできます。
 
 ---
 
