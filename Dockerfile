@@ -21,13 +21,14 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libicu-dev \
         libonig-dev \
+        libpq-dev \
         libzip-dev \
         unzip \
     && docker-php-ext-install -j$(nproc) \
         bcmath \
         intl \
         mbstring \
-        pdo_mysql \
+        pdo_pgsql \
         zip \
     && a2enmod rewrite \
     && sed -ri 's!DocumentRoot /var/www/html!DocumentRoot /var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
