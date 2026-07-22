@@ -13,10 +13,9 @@ Laravelで開発した勤怠管理システムです。
 
 ## アプリイメージ
 
-![Application Preview](docs/images/top-preview.png)
+![勤怠管理アプリ プレビュー](docs/images/application-preview.png)
 
-Welcome画面・ログイン画面・勤怠一覧・管理者画面など、  
-主要画面をまとめたプレビュー画像です。
+Welcome画面、ログイン画面、勤怠ダッシュボード、勤怠一覧、管理者ダッシュボード、修正申請一覧をまとめたプレビュー画像です。
 
 ---
 
@@ -307,4 +306,4 @@ MIT License
 
 ## 作者
 
-- GitHub: `<GitHubアカウントを追加>`
+- GitHub: https://github.com/shomaichida
